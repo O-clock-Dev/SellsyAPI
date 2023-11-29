@@ -14,7 +14,6 @@ class SellsyAPI:
             client_id (str): The client ID for Sellsy API authentication.
             client_secret (str): The client secret for Sellsy API authentication.
         """
-        self.token_file = "access_token"
         self.auth_url = "https://login.sellsy.com/oauth2/access-tokens"
         self.api_base_url = "https://api.sellsy.com/v2/"
         self.post_content_type = {
@@ -28,7 +27,7 @@ class SellsyAPI:
             "companies/search": "application/json",
             "contacts/search": "application/json"
         }
-        
+
         self.client_id = client_id
         self.client_secret = client_secret
         self.access_token, self.token_expiry = self._request_new_token()
