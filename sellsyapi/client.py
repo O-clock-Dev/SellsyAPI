@@ -27,7 +27,6 @@ class SellsyAPI:
             "companies/search": "application/json",
             "contacts/search": "application/json"
         }
-
         self.client_id = client_id
         self.client_secret = client_secret
         self.access_token, self.token_expiry = self._request_new_token()
@@ -70,7 +69,6 @@ class SellsyAPI:
             return func(self, *args, **kwargs)
         return wrapper
 
-
     def _request(self, method: str, endpoint: str, params: dict = None, data: dict = None) -> dict:
         """
         Sends a GET or POST request to the Sellsy API.
@@ -87,7 +85,7 @@ class SellsyAPI:
             requests.HTTPError: For HTTP-related errors.
             ValueError: If the response body does not contain valid JSON.
         """
-        MAX_RETRY = 5
+        MAX_RETRIES = 5
         params = params or {}
         params.setdefault('limit', 100)
         data = data or {}
@@ -98,15 +96,18 @@ class SellsyAPI:
 
         data = dumps(data) if content_type == "application/json" else data
 
-        for attempt in range(MAX_RETRY):
+        retries = 0
+        while retries < MAX_RETRIES
+        for attempt in range(MAX_RETRIES):
             try:
                 response = request(method, url, headers=headers, params=params, data=data)
                 response.raise_for_status()
                 return response.json()
             except RequestException as err:
-                if attempt >= MAX_RETRY-1:
-                    raise
-                sleep(1)
+                retries += 1
+                time.sleep(2 ** retries)  # Exponential backoff
+                if retries == max_retries:
+                    raise Exception(f"All retries failed for {endpoint}: {e}")
 
     @_check_access_token
     def get(self, endpoint: str, params: dict = {}) -> dict:
